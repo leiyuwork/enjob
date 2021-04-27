@@ -33,7 +33,7 @@ for year in range(2006, 2022):
     table_td_1 = bs_obj_1.find_all("td", class_="data")  # get the link tables
 
     for link in table_td_1:
-        url_2 = "https://employment.en-japan.com/"+link.find('a', href=True).attrs['href']
+        url_2 = "https://employment.en-japan.com"+link.find('a', href=True).attrs['href']
         print(url_2)
         response_2 = requests.get(url_2, headers=headers)  # open everyday link
         bs_obj_2 = BeautifulSoup(response_2.text, 'lxml')  # parse with beautifulsoup
@@ -53,7 +53,7 @@ for year in range(2006, 2022):
                 firm = results.find("span", class_="name").text
                 job_name = results.find("td", class_="job").text
                 job_link = results.find('a', href=True).attrs['href']
-                url_3 = "https://employment.en-japan.com/" + job_link
+                url_3 = "https://employment.en-japan.com" + job_link
                 print(url_3)
                 response_3 = requests.get(url_3, headers=headers)  # open everyday link
                 # print(response_2)
@@ -72,16 +72,21 @@ for year in range(2006, 2022):
                 for item in bosyuyoko:
                     for a in item:
                         final.append(a)
-
-                if len(bosyuyoko) < 15:
-                    list_null = [""] * (15 - len(tb.values.tolist()))
+                print(len(bosyuyoko))
+                print(len(final))
+                if len(bosyuyoko)*2 < 30:
+                    list_null = [""] * (30 - len(bosyuyoko)*2)
+                    print(len(list_null))
                     final = final + list_null
+                    print(len(final))
 
                 for item2 in kaisyajyoho:
                     for b in item2:
                         final.append(b)
-
+                print(len(final))
                 Item = pd.DataFrame([final])
-                Item.to_csv(r"C:\Users\Ray94\Desktop\000.csv", mode='a', index=False, header=None, encoding="utf-8_sig")
+               
+                Item.to_csv(r"C:\\Users\Ray94\Desktop\000.csv", mode='a', index=False, header=None, encoding="utf-8_sig")
                 time.sleep(15)
+
 
