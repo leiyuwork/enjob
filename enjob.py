@@ -72,18 +72,15 @@ for year in range(2006, 2022):
                 for item in bosyuyoko:
                     for a in item:
                         final.append(a)
-                print(len(bosyuyoko))
-                print(len(final))
+
                 if len(bosyuyoko)*2 < 30:
                     list_null = [""] * (30 - len(bosyuyoko)*2)
-                    print(len(list_null))
+
                     final = final + list_null
-                    print(len(final))
 
                 for item2 in kaisyajyoho:
                     for b in item2:
                         final.append(b)
-                print(len(final))
                 Item = pd.DataFrame([final])
                
                 Item.to_csv(r"C:\\Users\Ray94\Desktop\000.csv", mode='a', index=False, header=None, encoding="utf-8_sig")
