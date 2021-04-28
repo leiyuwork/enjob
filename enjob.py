@@ -72,6 +72,7 @@ for year in range(2006, 2022):
                 final.append(date)
                 final.append(industry)
                 final.append(name)
+                final.append(catchphrase)
 
                 for item in bosyuyoko:
                     for a in item:
