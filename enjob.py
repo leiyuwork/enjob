@@ -44,13 +44,17 @@ for year in range(2006, 2022):
         table_td_industry = bs_obj_2.find_all("h2", class_="title")  # get the link tables
         # print(table_td_industry)
         table_td_2 = bs_obj_2.find_all("tr")  # get the link tables
+        table_list = bs_obj_2.find_all("div", class_="listBase")
 
-        for industries in table_td_industry:
-            industry = industries.find("span").text
+        for firms in table_list:
+            # print(firms)
 
-            for results in table_td_2[2:]:
+            for results in firms.find_all("tr"):
                 final = []
-                firm = results.find("span", class_="name").text
+
+                industry = firms.find("span").text
+
+                name = results.find("span", class_="name").text
                 job_name = results.find("td", class_="job").text
                 job_link = results.find('a', href=True).attrs['href']
                 url_3 = "https://employment.en-japan.com" + job_link
@@ -67,14 +71,14 @@ for year in range(2006, 2022):
                 kaisyajyoho = tb_2.values.tolist()
                 final.append(date)
                 final.append(industry)
-                final.append(firm)
+                final.append(name)
 
                 for item in bosyuyoko:
                     for a in item:
                         final.append(a)
 
-                if len(bosyuyoko)*2 < 30:
-                    list_null = [""] * (30 - len(bosyuyoko)*2)
+                if len(bosyuyoko) * 2 < 30:
+                    list_null = [""] * (30 - len(bosyuyoko) * 2)
 
                     final = final + list_null
 
@@ -82,8 +86,9 @@ for year in range(2006, 2022):
                     for b in item2:
                         final.append(b)
                 Item = pd.DataFrame([final])
-               
-                Item.to_csv(r"C:\\Users\Ray94\Desktop\000.csv", mode='a', index=False, header=None, encoding="utf-8_sig")
-                time.sleep(15)
+
+                Item.to_csv(r"C:\\Users\Ray94\Desktop\000.csv", mode='a', index=False, header=None,
+                            encoding="utf-8_sig")
+                time.sleep(5)
 
 
