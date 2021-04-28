@@ -90,6 +90,6 @@ for year in range(2006, 2022):
 
                 Item.to_csv(r"C:\\Users\Ray94\Desktop\000.csv", mode='a', index=False, header=None,
                             encoding="utf-8_sig")
-                time.sleep(5)
+                time.sleep(10)
 
 
