@@ -28,7 +28,7 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36',
     'Connection': 'keep-alive',
 }
-for year in range(2006, 2007):
+for year in range(2007, 2008):
 
     url_1 = "https://employment.en-japan.com/search/issue_index_" + str(year) + "/"  # link of every year
     print(url_1)
@@ -93,7 +93,7 @@ for year in range(2006, 2007):
                             final.append(b)
                     Item = pd.DataFrame([final])
 
-                    Item.to_csv(r"C:\\Users\Ray94\Desktop\2016.csv", mode='a', index=False, header=None,
+                    Item.to_csv(r"C:\\Users\Ray94\Desktop\2007.csv", mode='a', index=False, header=None,
                                 encoding="utf-8_sig")
                     time.sleep(10)
                 except Exception as e:
