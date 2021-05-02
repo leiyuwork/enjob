@@ -15,7 +15,7 @@ headers = {
                   'Chrome/90.0.4430.93 Safari/537.36',
 }
 
-url_2 = "https://employment.en-japan.com/search/issue_list_1158/"
+url_2 = "https://employment.en-japan.com/search/issue_list_1149/"
 print(url_2)
 response_2 = requests.get(url_2, headers=headers)  # open everyday link
 bs_obj_2 = BeautifulSoup(response_2.text, 'lxml')  # parse with beautifulsoup
@@ -25,21 +25,7 @@ date = bs_obj_2.find("em", class_="date").text
 final = []
 
 
-job_links = ['/desc_92026/', '/desc_91871/', '/desc_91769/',
-            '/desc_92629/', '/desc_92004/', '/desc_92597/', '/desc_91665/', '/desc_92559/', '/desc_91917/',
-            '/desc_91870/', '/desc_91788/', '/desc_92215/', '/desc_92378/', '/desc_92303/', '/desc_92044/',
-            '/desc_90463/', '/desc_92473/', '/desc_91618/', '/desc_89567/', '/desc_92198/', '/desc_91785/',
-            '/desc_92453/', '/desc_92347/', '/desc_91826/', '/desc_91625/', '/desc_91579/', '/desc_92156/',
-            '/desc_92263/', '/desc_92247/', '/desc_92483/', '/desc_91792/', '/desc_91691/', '/desc_92415/',
-            '/desc_92446/', '/desc_91789/', '/desc_92315/', '/desc_91069/', '/desc_92519/', '/desc_92178/',
-            '/desc_91344/', '/desc_92204/', '/desc_92218/', '/desc_92380/', '/desc_92613/', '/desc_92427/',
-            '/desc_92032/', '/desc_92487/', '/desc_92192/', '/desc_92649/', '/desc_92253/', '/desc_89553/',
-            '/desc_92138/', '/desc_91729/', '/desc_92217/', '/desc_92104/', '/desc_90703/', '/desc_88220/',
-            '/desc_91992/', '/desc_92254/', '/desc_92556/', '/desc_90235/', '/desc_92627/', '/desc_92206/',
-            '/desc_92041/', '/desc_92354/', '/desc_90509/', '/desc_92288/', '/desc_92291/', '/desc_90998/',
-            '/desc_92257/', '/desc_92458/', '/desc_92142/', '/desc_92086/', '/desc_91712/', '/desc_92304/',
-            '/desc_91976/', '/desc_92409/', '/desc_92057/', '/desc_92134/', '/desc_92423/', '/desc_92363/',
-            '/desc_92522/']
+job_links = ['/desc_89440/']
 
 
 for job_link in job_links:
@@ -86,7 +72,7 @@ for job_link in job_links:
                 final.append(b)
         Item = pd.DataFrame([final])
 
-        Item.to_csv(r"C:\\Users\Ray94\Desktop\000.csv", mode='a', index=False, header=None,
+        Item.to_csv(r"C:\\Users\Ray94\Desktop\002.csv", mode='a', index=False, header=None,
                     encoding="utf-8_sig")
         time.sleep(10)
     except Exception as e:
