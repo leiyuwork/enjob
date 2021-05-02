@@ -5,33 +5,41 @@ import pandas as pd
 import PySimpleGUI as sg
 import os
 import warnings
+
 warnings.filterwarnings("ignore")
 
 sg.theme('DarkAmber')
-Sheets = ['Income Statement', 'Balance Sheet', 'Cash Flow', ]
+Sheets = range(2006, 2022)
 
 layout = [[sg.Text('【説明】\n'
-                   '本プログラムはエン・ジャパン求人一覧データ2016-2021年分を取得するため作られたものです。\n'
-                   'Browseをクリックして、出力フォルダーを選択してOKボタンを押してください。処理が自動的に始まります。\n\n'
-                   '【成果物】\n処理が始まると①year data.csv ②year log.csvが作成されます。(例：2016data.csv)\n'
+                   '本プログラムはエン・ジャパン求人一覧データを取得するために作られたものです。\n')],
+          [sg.Text('【作業手順】\n'
+                   '①Browseをクリックして、出力フォルダーを指定する')],
+          [sg.Text('出力フォルダー:'), sg.Input(), sg.FolderBrowse()],
+          [sg.Text('②取得したいデータ期間を指定する')],
+          [sg.Listbox(Sheets, key='-Sheet_list-', size=(20, 12))],
+          [sg.Text('③【作業開始】ボタンを押してください。\n')],
+          [sg.Button('作業開始'), sg.Button('キャンセル')],
+          [sg.Text('④処理が自動的に始まります。全ての処理が終わりましたら、この作業Windowが自動的に消えます。\n\n'
+                   '【成果物】\n'
+                   '処理が始まると①year data.csv(求人データ) ②year log.csv(作業ログ)が作成されます。(例：2016data.csv)\n'
                    'データ取得エラーが発生する場合、③year error.csvに記録されますが、処理自体が継続します。\n\n'
-                   '【注意事項】\n処理中は作業Windowを動かさないでください。pythonがフリーズする可能性があります。\n'
-                   '処理中は成果物のexcelを開かないでください。\n'
-                   '全ての処理が終わりましたら、この作業Windowが自動的に消えます。')],
-          [sg.Text('Output folder:'), sg.Input(), sg.FolderBrowse()],
-          [sg.Button('Ok'), sg.Button('Cancel')],
+                   '【注意事項】\n'
+                   '処理中は作業Windowを動かさないでください。pythonがフリーズする可能性があります。\n'
+                   '処理中は成果物のexcelを開かないでください。\n')],
           [sg.Output(size=(60, 10))],
           [sg.Text('© 2021 Yu,lei programmed for Karube-enjapan project.')], ]
 
 # 创造窗口
-window = sg.Window('enjapan project data generator(Yu Lei)', layout)
+window = sg.Window('enjapan project data generator(Yu Lei)　v2.0', layout)
 # 事件循环并获取输入值
 while True:
     event, values = window.read()
-    if event in (None, 'Cancel'):  # 如果用户关闭窗口或点击`Cancel`
+    if event in (None, 'キャンセル'):  # 如果用户关闭窗口或点击`Cancel`
         break
     print('出力フォルダーは ', values[0])
     path_out = values[0]
+    year = values["-Sheet_list-"][0]
 
     headers = {
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,'
@@ -57,84 +65,80 @@ while True:
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36',
         'Connection': 'keep-alive',
     }
-    for year in range(2016, 2022):
+    url_1 = "https://employment.en-japan.com/search/issue_index_" + str(year) + "/"  # link of every year
+    print(url_1)
 
-        url_1 = "https://employment.en-japan.com/search/issue_index_" + str(year) + "/"  # link of every year
-        print(url_1)
+    response_1 = requests.get(url_1, headers=headers)  # get url contents
+    bs_obj_1 = BeautifulSoup(response_1.text, 'lxml')  # parse with beautifulsoup
+    table_td_1 = bs_obj_1.find_all("td", class_="data")  # get the link tables
 
-        response_1 = requests.get(url_1, headers=headers)  # get url contents
-        bs_obj_1 = BeautifulSoup(response_1.text, 'lxml')  # parse with beautifulsoup
-        table_td_1 = bs_obj_1.find_all("td", class_="data")  # get the link tables
+    for link in table_td_1:
+        url_2 = "https://employment.en-japan.com" + link.find('a', href=True).attrs['href']
+        print(url_2)
+        response_2 = requests.get(url_2, headers=headers)  # open everyday link
+        bs_obj_2 = BeautifulSoup(response_2.text, 'lxml')  # parse with beautifulsoup
+        # print(bs_obj_2)
 
-        for link in table_td_1:
-            url_2 = "https://employment.en-japan.com"+link.find('a', href=True).attrs['href']
-            print(url_2)
-            response_2 = requests.get(url_2, headers=headers)  # open everyday link
-            bs_obj_2 = BeautifulSoup(response_2.text, 'lxml')  # parse with beautifulsoup
-            # print(bs_obj_2)
+        date = bs_obj_2.find("em", class_="date").text
+        table_list = bs_obj_2.find_all("div", class_="listBase")
 
-            date = bs_obj_2.find("em", class_="date").text
-            table_list = bs_obj_2.find_all("div", class_="listBase")
+        for firms in table_list:
+            # print(firms)
 
-            for firms in table_list:
-                # print(firms)
+            for results in firms.find_all("tr"):
+                final = []
 
-                for results in firms.find_all("tr"):
-                    final = []
+                industry = firms.find("span").text
+                company_name = results.find("span", class_="name").text
+                job_name = results.find("td", class_="job").text
+                job_link = results.find('a', href=True).attrs['href']
 
-                    industry = firms.find("span").text
-                    company_name = results.find("span", class_="name").text
-                    job_name = results.find("td", class_="job").text
-                    job_link = results.find('a', href=True).attrs['href']
+                url_3 = "https://employment.en-japan.com" + job_link
+                print('処理中:' + url_3)
+                try:
+                    response_3 = requests.get(url_3, headers=headers)  # open everyday link
+                    # print(response_2)
+                    bs_obj_3 = BeautifulSoup(response_3.text, 'lxml')  # parse with beautifulsoup
+                    # print(bs_obj_2)
+                    # time.sleep(3)
+                    catchphrase = bs_obj_3.find("div", class_="copyArea").text
+                    tb = pd.read_html(url_3)[1]
+                    tb_2 = pd.read_html(url_3)[2]
+                    bosyuyoko = tb.values.tolist()
+                    kaisyajyoho = tb_2.values.tolist()
+                    final.append(url_2)
+                    final.append(url_3)
+                    final.append(date)
+                    final.append(industry)
+                    final.append(company_name)
+                    final.append(job_name)
+                    final.append(catchphrase)
 
-                    url_3 = "https://employment.en-japan.com" + job_link
-                    print('処理中:' + url_3)
-                    try:
-                        response_3 = requests.get(url_3, headers=headers)  # open everyday link
-                        # print(response_2)
-                        bs_obj_3 = BeautifulSoup(response_3.text, 'lxml')  # parse with beautifulsoup
-                        # print(bs_obj_2)
-                        # time.sleep(3)
-                        catchphrase = bs_obj_3.find("div", class_="copyArea").text
-                        tb = pd.read_html(url_3)[1]
-                        tb_2 = pd.read_html(url_3)[2]
-                        bosyuyoko = tb.values.tolist()
-                        kaisyajyoho = tb_2.values.tolist()
-                        final.append(url_2)
-                        final.append(url_3)
-                        final.append(date)
-                        final.append(industry)
-                        final.append(company_name)
-                        final.append(job_name)
-                        final.append(catchphrase)
+                    for item in bosyuyoko:
+                        for a in item:
+                            final.append(a)
 
-                        for item in bosyuyoko:
-                            for a in item:
-                                final.append(a)
+                    if len(bosyuyoko) * 2 < 30:
+                        list_null = [""] * (30 - len(bosyuyoko) * 2)
 
-                        if len(bosyuyoko) * 2 < 30:
-                            list_null = [""] * (30 - len(bosyuyoko) * 2)
+                        final = final + list_null
 
-                            final = final + list_null
+                    for item2 in kaisyajyoho:
+                        for b in item2:
+                            final.append(b)
+                    Item = pd.DataFrame([final])
 
-                        for item2 in kaisyajyoho:
-                            for b in item2:
-                                final.append(b)
-                        Item = pd.DataFrame([final])
+                    Item.to_csv(path_out + '\\' + str(year) + "data.csv", mode='a', index=False, header=None,
+                                encoding="utf-8_sig")
+                    time.sleep(10)
 
-                        Item.to_csv(path_out + '\\' + str(year) + "data.csv", mode='a', index=False, header=None,
-                                    encoding="utf-8_sig")
-                        time.sleep(10)
+                    log = pd.DataFrame([[url_1, url_2, url_3]])
 
-                        log = pd.DataFrame([[url_1, url_2, url_3]])
-
-                        log.to_csv(path_out + '\\' + str(year) + "log.csv", mode='a', index=False, header=None,
-                                    encoding="utf-8_sig")
-                        time.sleep(10)
-                    except Exception as e:
-                        Error = pd.DataFrame([[url_2, url_3, str(e)]])
-                        Error.to_csv(path_out + '\\' + str(year) + "error.csv", mode='a', index=False, header=None,
-                                     encoding="utf-8_sig")
-                        pass
+                    log.to_csv(path_out + '\\' + str(year) + "log.csv", mode='a', index=False, header=None,
+                               encoding="utf-8_sig")
+                except Exception as e:
+                    Error = pd.DataFrame([[url_2, url_3, str(e)]])
+                    Error.to_csv(path_out + '\\' + str(year) + "error.csv", mode='a', index=False, header=None,
+                                 encoding="utf-8_sig")
+                    pass
 window.close()
-

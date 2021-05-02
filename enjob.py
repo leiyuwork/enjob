@@ -93,12 +93,17 @@ for year in range(2007, 2008):
                             final.append(b)
                     Item = pd.DataFrame([final])
 
-                    Item.to_csv(r"C:\\Users\Ray94\Desktop\2007.csv", mode='a', index=False, header=None,
+                    Item.to_csv(r"C:\\Users\Ray94\Desktop\2007data.csv", mode='a', index=False, header=None,
+                                encoding="utf-8_sig")
+
+                    log = pd.DataFrame([[url_1, url_2, url_3]])
+
+                    log.to_csv(r"C:\\Users\Ray94\Desktop\2007log.csv", mode='a', index=False, header=None,
                                 encoding="utf-8_sig")
                     time.sleep(10)
                 except Exception as e:
                     Error = pd.DataFrame([[url_2, url_3, str(e)]])
-                    Error.to_csv(r"C:\\Users\Ray94\Desktop\error.csv", mode='a', index=False, header=None,
+                    Error.to_csv(r"C:\\Users\Ray94\Desktop\2007error.csv", mode='a', index=False, header=None,
                                  encoding="utf-8_sig")
                     pass
 
