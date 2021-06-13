@@ -22,8 +22,8 @@ layout = [[sg.Text('【説明】\n'
           [sg.Button('作業開始'), sg.Button('キャンセル')],
           [sg.Text('④処理が自動的に始まります。全ての処理が終わりましたら、この作業Windowが自動的に消えます。\n\n'
                    '【成果物】\n'
-                   '処理が始まると①year data.csv(求人データ) ②year log.csv(作業ログ)が作成されます。(例：2016data.csv)\n'
-                   'データ取得エラーが発生する場合、③year error.csvに記録されますが、処理自体が継続します。\n\n'
+                   '処理が始まると①year_multi_data.csv(求人データ) ②year_multi_log.csv(作業ログ)が作成されます。(例：2016_multi_data.csv)\n'
+                   'データ取得エラーが発生する場合、③year_multi_error.csvに記録されますが、処理自体が継続します。\n\n'
                    '【注意事項】\n'
                    '処理中は作業Windowを動かさないでください。pythonがフリーズする可能性があります。\n'
                    '処理中は成果物のexcelを開かないでください。\n')],
